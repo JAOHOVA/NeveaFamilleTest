@@ -1,0 +1,141 @@
+<?php
+
+/**
+ *
+ * @version $Id$
+ * @author Jérémy Bouty - Nevea
+ * @license http://www.fsf.org/licensing/licenses/agpl-3.0.html GNU Affero General Public License
+ * @package NEVEA_PLANNER
+ * @copyright S.A.S. NEVEA
+ *
+ */
+class NeveaFamilleTest extends Dcp\Family\Document
+{
+    public $defaultedit = "FORMATION:EDITNEVEAFAMILLETEST";
+    public $defaultview = "FORMATION:VIEWNEVEAFAMILLETEST";
+
+    /**
+     * @templateController
+     */
+
+    public function viewNeveaFamilleTest()
+    {
+        //TODO
+        try{
+            $error = $this->lay->set('idDocumentNeveaFamilleTest', $this->id);
+            //$error = 'toto';
+            if ($error != '') {
+                throw new \Exception($error, 5);
+            }
+        } catch (\Exception $e){
+            var_dump($e);
+            exit(0);
+        }
+    }
+
+    /**
+     * @templateController
+     */
+
+    public function editNeveaFamilleTest()
+    {
+        //TODO
+        // Mode création, id = ''
+        if($this->id == '')
+        {
+            $this->lay->set('isNewDoc', true);
+            $this->lay->set('fromidDocumentNeveaFamilleTest', $this->fromid);
+        }
+        else
+        {
+            $this->lay->set('isNewDoc', false);
+            $this->lay->set('idDocumentNeveaFamilleTest', $this->id);
+        }
+    }
+
+    /*public function preConsultation() 
+    {
+        echo "toto";
+    }*/
+
+
+    /*public function preEdition() 
+    {
+        $this->setAttributeValue( 'nft_int', '45');
+    }*/
+
+    public function addNumber()
+    {
+        $a = 12;
+        $b = 5;
+        return $a + $b ;
+    }
+
+    public function preCreated()
+    {
+        /*if($this->getAttributeValue('nft_int') != 8) {
+            return 'toto';
+        } */
+        $this->setAttributeValue( 'nft_int', $this->addNumber());
+    }
+
+    public function postCreated()
+    {
+        $this->setAttributeValue('nft_int', $this->addNumber()+10);
+        //$this->store();
+    }
+
+    public function addDatePerOne()
+    {
+        /*var_dump(date('YYYY-mm-dd', strtotime(' + 1 day')));
+        exit(0);*/
+        $date = new \DateTime();
+        $date->add(new \DateInterval('P1D'));
+        return $date->format('Y-m-d');
+    }
+
+    public function preConsultation()
+    {
+        //$this->setAttributeValue('nft_date', $this->addDatePerOne());
+        //return $this->readData();
+
+    }
+
+    /*public function detectUser()
+    {
+        $user = getCurrentUser();
+        //var_dump($user);
+        //exit(0);
+        if ($user->login == 'admin') {
+            $err = "L\'admin n\'a pas tous les droits";
+        }
+        return $err;
+    }
+
+    public function preDelete()
+    {
+        return $this->detectUser();
+    }*/
+
+    public function postDelete()
+    {
+        global $action;
+
+        $msg = "La suppression a été faite avec succès !";
+        $action->addWarningMsg($msg);
+    }
+
+    public function readData()
+    {
+        $sql = "SELECT title, id, initid, revision, locked, nft_int FROM family.nevea_famille_test";
+        $result = array();
+        simpleQuery($dbAccess, $sql, $result);
+        
+        var_dump($result);
+        
+        //return $result;
+    }
+
+}
+
+?>

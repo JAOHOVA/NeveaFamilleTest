@@ -1,0 +1,6 @@
+[IF isNewDoc]
+[ZONE FDL:VIEWSCARD?zone=FDL:EDITBODYCARD&id=[fromidDocumentNeveaFamilleTest]]
+[ENDIF isNewDoc]
+[IFNOT isNewDoc]
+[ZONE FDL:VIEWSCARD?zone=FDL:EDITBODYCARD&id=[idDocumentNeveaFamilleTest]]
+[ENDIF isNewDoc]

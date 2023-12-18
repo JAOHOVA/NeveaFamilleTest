@@ -1,0 +1,257 @@
+<!-- Décommenter la ligne ci-dessous si vous voulez afficher la vue d'origine dynacase -->
+<!-- [ZONE FDL:VIEWSCARD?zone=FDL:VIEWBODYCARD&id=[idDocumentNeveaFamilleTest]] -->
+
+<!-- Vue Spécifique reprennant la strucutration de la vue Dynacase mais "custom" -->
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/themes/6.7.0/default/default-main.css" />
+<script src="https://kendo.cdn.telerik.com/2023.2.829/js/jquery.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+
+<div class="tabh">
+    <span title="onglet" id="TAB_id_nft_fr_number">Nombres</span>
+    <span title="onglet" id="TAB_id_nft_fr_string">String</span>
+    <span title="onglet" id="TAB_id_nft_fr_date">Date</span>
+    <span title="onglet" id="TAB_id_nft_fr_file">File</span>
+    <span title="onglet" id="TAB_id_nft_fr_other">Autres</span>
+    <span title="onglet" id="TAB_id_nft_fr_id_doc">ID Documents</span>
+    <span title="onglet" id="TAB_id_nft_fr_enum">Enumérés</span>
+    <span title="onglet" id="TAB_id_nft_fr_array">Array</span>
+</div>
+<div id="FRAME_id_nft_fr_number">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_number]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_string">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_string]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_date">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_date]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_file">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_file]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_other">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_other]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_id_doc">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_id_doc]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_enum">
+    <table width="100%">
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_enum]
+    </table>
+</div>
+
+<div id="FRAME_id_nft_fr_array">
+
+<script src="https://kendo.cdn.telerik.com/2022.1.119/js/cultures/kendo.culture.de-DE.min.js"></script>
+
+    <table width="100%"> 
+        [ZONE FDL:VIEWFRAME?frameid=nft_fr_array]
+        <!-- METTRE VOTRE CODE DE TABLEAU ICI -->
+    </table>
+        <div id="grid"></div>
+
+</div>
+
+<script>
+    $('[id^="FRAME_id_nft_fr_"]').hide();
+    $('[id^="FRAME_id_nft_fr_number"]').show();
+
+    // Switch des div
+    $('[id^="TAB_id_nft_fr_"]').click(function(){
+        var currentId = this.id.substring(4);
+
+        $('[id^="FRAME_id_nft_fr_"]').filter(function() {
+            var bReturn = false;
+            var filteredId = this.id.substring(6);
+
+            if(filteredId != currentId)
+            {
+                bReturn = true;
+                $("#TAB_" + filteredId).removeClass('tabsel');
+            }
+            return bReturn;
+        }).hide();
+
+        $('[id^="FRAME_id_nft_fr_"]').filter(function() {
+            var bReturn = false;
+            var filteredId = this.id.substring(6);
+
+            if(filteredId == currentId)
+            {
+                bReturn = true;
+                $("#TAB_" + filteredId).addClass('tabsel');
+            }
+            return bReturn;
+        }).show();
+    });
+</script>
+
+<script>
+    $(() => {   
+
+        // Comptez le nombre de lignes dans la grille
+        var numberOfLines = [MYARRAY].length;
+
+        //console.log("Nombre de lignes dans la grille : " + numberOfLines);
+
+        const columns = [MYCOLUMN].map((item, index) => ({
+            field: item.field, 
+            //title: item.title,
+            title: index === 0 ? `${item.title} (${numberOfLines})`: item.title, 
+            //width: item.field == 'nft_ar_int'?50:90,
+            headerAttributes: {"class": "wrap-header"}, 
+            template: function(dataItem, field = item.field, title = item.title) {
+            //console.log(dataItem);
+                switch (field) {
+                    case 'nft_ar_color':
+                        return "<span style=\"background-color: " + dataItem[field] +"\">" + dataItem[field] + "</span>";
+                        break;
+                    case 'nft_ar_date':
+                        var date = new Date(dataItem[field]);
+                        return kendo.toString(date, "dd/MM/yyyy");
+                        break;
+                    case 'nft_ar_timestamp':
+                        var date = kendo.parseDate(dataItem[field]);
+                        return kendo.toString(date, "dd/MM/yyyy HH:mm");
+                        break;
+                    case 'nft_ar_money':
+                        kendo.culture("de-DE");
+                        return kendo.toString(kendo.parseInt(dataItem[field]), "0.00");
+                        break;
+                    case 'nft_ar_htmltext':
+                        return dataItem[field];
+                        //return "<span style=\"min-width: " + 300 +"\">" + dataItem[field] + "</span>";
+                        encoded: false; // permet l'affichage du HTML
+                        break;
+                    case 'nft_ar_file':
+                        return dataItem[field] ;
+                    case 'nft_ar_enum':
+                        return dataItem[field] ;
+                        break;
+                    case 'nft_ar_image':
+                        return "<img  src= \"" + dataItem[field] + "\" alt=\"Image\" />";
+                        break;
+                    case 'nft_ar_idtitle':
+                        return "<a target=\"_self\" title=\"\" onmousedown=\"document.noselect=true;\"  href=\"?sole=Y&amp;&amp;app=FDL&amp;action=FDL_CARD&amp;id=" + dataItem.nft_ar_id + "\">" + dataItem[field] + "</a>";
+                        break;
+                    case 'nft_ar_docid':
+                        return "<a oncontextmenu=\"popdoc(event,\'?&app=FDL&action=OPENDOC&mode=view&id=1218936&latest=Y\');return false;\" documentid=\"" + dataItem.nft_ar_docid + "\" class=\"relation\" style=\"background-image:url(resizeimg.php?img=Images%2Fsociete.gif&amp;size=14)\" target=\"_self\" href=\"?&amp;app=FDL&amp;action=OPENDOC&amp;mode=view&amp;id=" + dataItem.nft_ar_docid + "&amp;latest=Y\">" + dataItem[field] + "</a>";
+                        break;
+                    default:
+                        return  kendo.htmlEncode(dataItem[field]);
+                }
+
+            }
+
+        }));
+
+        // Pour ajuster la largeur de colonne de la grille
+        function ajusterLargeurColonne(grille, nomColonne, nouvelleLargeur) {
+        // Récupérer la configuration actuelle des colonnes
+        const colonnesActuelles = grille.getOptions().columns;
+
+        // Rechercher l'index de la colonne à modifier
+        const indexColonne = colonnesActuelles.findIndex(colonne => colonne.field === nomColonne);
+
+        // Si la colonne est trouvée, ajuster la largeur
+        if (indexColonne !== -1) {
+            colonnesActuelles[indexColonne].width = nouvelleLargeur;
+
+            // Appliquer la nouvelle configuration des colonnes à la grille
+            grille.setOptions({ columns: colonnesActuelles });
+        } else {
+            console.error("La colonne spécifiée n'a pas été trouvée.");
+            }   
+        }
+
+        var orderData = [MYARRAY]; 
+        var gridDataSource = new kendo.data.DataSource({
+            data: orderData
+        }); 
+        
+        const myGrid = $("#grid").kendoGrid({
+        dataSource:gridDataSource,          
+
+        height: 500,
+        pageable: false,
+        sortable: false,
+        filterable: false,
+        //wordWrap: true,
+        resizable: true, // Permet la redimensionnement manuel des colonnes
+        toolbar:["search"],
+        columns: columns,
+        // Redimensionne automatiquement les colonnes en fonction du contenu
+        /*dataBound: function (e) {
+        var grid = e.sender;
+        console.log(grid.columns[5].field);
+        //grid.autoFitColumn(grid.columns[5].field);
+        grid.autoFitColumn("nft_ar_longtext");
+        }*/
+
+        }).data("kendoGrid");
+
+        // Appel de la fonction pour ajuster la largeur de la colonne
+        ajusterLargeurColonne(myGrid, "nft_ar_htmltext", 115.44);
+        ajusterLargeurColonne(myGrid, "nft_ar_image", 87);
+        ajusterLargeurColonne(myGrid, "nft_ar_file", 91);
+        ajusterLargeurColonne(myGrid, "nft_ar_int", 48);
+        ajusterLargeurColonne(myGrid, "nft_ar_money", 79.92);
+        ajusterLargeurColonne(myGrid, "nft_ar_longtext", 96.2);
+        ajusterLargeurColonne(myGrid, "nft_ar_date", 88);
+        ajusterLargeurColonne(myGrid, "nft_ar_timestamp", 76.86);
+        ajusterLargeurColonne(myGrid, "nft_ar_idtitle", 73.78);
+        ajusterLargeurColonne(myGrid, "nft_ar_docid", 107.84);
+
+    });
+
+</script>
+
+<style type="text/css">
+    .k-grid-header .wrap-header {
+        white-space: normal;
+        //overflow-wrap: anywhere;
+        //height: 65px !important;
+        <!-- background-color: green !important; -->
+    }
+    .k-header {
+        //text-align: center !important;
+        vertical-align: middle !important;
+        padding-top: 0px !important;
+        padding-bottom: 0px !important;
+        padding-right: 4px !important;
+
+    }
+    td.k-table-td {
+        vertical-align: top !important;
+    }
+    td.k-table-td img {
+        height: 53px !important;
+    }
+    td.k-table-td img.mime {
+        height: 20px !important;
+        width: 20px !important;
+    }
+    td p {
+        margin-top: 0px;
+        margin-bottom: 0px;
+    }
+        
+</style>
